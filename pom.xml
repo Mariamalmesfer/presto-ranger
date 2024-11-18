@@ -10,7 +10,7 @@
 
     <groupId>com.facebook.presto.ranger</groupId>
     <artifactId>ranger-apache</artifactId>
-    <version>2.1.0-4-SNAPSHOT</version>
+    <version>2.5.0</version>
 
     <name>ranger-apache</name>
     <description>Shaded version of Apache Ranger for Presto</description>
@@ -37,8 +37,11 @@
         <air.check.skip-checkstyle>true</air.check.skip-checkstyle>
         <air.check.skip-spotbugs>true</air.check.skip-spotbugs>
 
-        <dep.ranger.version>2.1.0</dep.ranger.version>
+        <dep.ranger.version>2.5.0</dep.ranger.version>
         <dep.nexus-staging-plugin.version>1.6.8</dep.nexus-staging-plugin.version>
+        <dep.jackson.version>2.17.2</dep.jackson.version>
+        <dep.slf4j.version>1.7.36</dep.slf4j.version>
+        <dep.logback.version>1.2.13</dep.logback.version>
         <shadeBase>com.facebook.presto.ranger.\$internal</shadeBase>
     </properties>
 
@@ -48,6 +51,14 @@
             <artifactId>ranger-plugins-common</artifactId>
             <version>${dep.ranger.version}</version>
             <exclusions>
+                <exclusion>
+                    <groupId>commons-io</groupId>
+                    <artifactId>commons-io</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-lang3</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>log4j</groupId>
                     <artifactId>log4j</artifactId>
@@ -84,6 +95,10 @@
             <artifactId>ranger-plugins-audit</artifactId>
             <version>${dep.ranger.version}</version>
             <exclusions>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpcore-nio</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>org.scala-lang</groupId>
                     <artifactId>scala-library</artifactId>
@@ -272,7 +287,7 @@
         <dependency>
             <groupId>org.apache.zookeeper</groupId>
             <artifactId>zookeeper</artifactId>
-            <version>3.4.12</version>
+            <version>3.8.4</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -315,6 +330,54 @@
                     <artifactId>httpcore</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${dep.jackson.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${dep.jackson.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-smile</artifactId>
+            <version>${dep.jackson.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${dep.jackson.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${dep.slf4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${dep.slf4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${dep.logback.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>${dep.logback.version}</version>
         </dependency>
 
     </dependencies>
@@ -454,6 +517,14 @@
                                         <exclude>assets/org/apache/commons/math3/exception/util/LocalizedFormats_fr.properties</exclude>
                                         <exclude>assets/org/apache/commons/math3/random/new-joe-kuo-6.1000</exclude>
                                         <exclude>apispec/*</exclude>
+                                        <exclude>META-INF/versions/17/**</exclude> <!-- Exclude Java 17 specific files -->
+                                    </excludes>
+                                </filter>
+                                <filter>
+                                    <artifact>*:jackson-core</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/versions/21/com/fasterxml/jackson/core/io/doubleparser/FastIntegerMath.class</exclude>
+                                        <exclude>META-INF/versions/21/com/fasterxml/jackson/core/io/doubleparser/FastDoubleSwar.class</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
